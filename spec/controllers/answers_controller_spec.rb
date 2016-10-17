@@ -1,41 +1,70 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
-  let(:question) { FactoryGirl.create(:question) }
-  describe 'GET #new' do
-    before do
-      get :new, question_id: question
+  sign_in_user
+
+  let(:question) { create :question, user: @user }
+  let(:answer) { create :answer, question: question, user: @user }
+  let(:invalid_answer) { create :invalid_answer, question: question }
+
+  describe 'POST #create' do
+    context 'answer with valid data' do
+      it 'save new answer for question' do
+        expect { post :create, answer: attributes_for(:answer), question_id: question }
+          .to change(question.answers, :count).by(1)
+      end
+
+      it 'new asnwer belongs_to to user' do
+        expect { post :create, answer: attributes_for(:answer), question_id: question }
+          .to change(@user.answers, :count).by(1)
+      end
+
+      it 'redirect to question#show' do
+        post :create, answer: attributes_for(:answer), question_id: question
+        expect(response).to redirect_to assigns(:question)
+      end
     end
 
-    it 'assigns a new answer for question' do
-      expect(assigns(:answer)).to be_a_new(Answer)
-    end
+    context 'answer with invalid data' do
+      it 'do not save new answer anywhere' do
+        expect { post :create, answer: attributes_for(:invalid_answer), question_id: question }
+          .to_not change(Answer, :count)
+      end
 
-    it 'renders new view' do
-      expect(response).to render_template :new
+      it 'render question#show' do
+        post :create, answer: attributes_for(:invalid_answer), question_id: question
+        expect(response).to redirect_to assigns(:question)
+      end
     end
   end
 
-  describe 'POST #create' do
-    context 'with valid attribs' do
-      it 'save answer for question' do
-        expect { post :create, question_id: question, answer: attributes_for(:answer) }.to change(question.answers, :count).by(1)
+  describe 'DELETE #destroy' do
+    context 'User is owner' do
+      before { answer }
+
+      it 'delete answer from question' do
+        expect { delete :destroy, id: answer }
+          .to change(question.answers, :count).by(-1)
       end
 
-      it 'redirect to show question with answers' do
-        post :create, question_id: question, answer: attributes_for(:answer)
-        expect(response).to redirect_to question_path(question)
+      it 'redirect to question#show' do
+        delete :destroy, id: answer
+        expect(response).to redirect_to assigns(:question)
       end
     end
 
-    context 'with invalid attribs' do
-      it 'not save answer for question' do
-        expect { post :create, question_id: question, answer: attributes_for(:invalid_answer) }.to_not change(Answer, :count)
+    context 'User is not owner' do
+      let(:another_user) { create(:user) }
+      let!(:another_answer) { create :answer, question: question, user: another_user }
+
+      it 'delete answer from question' do
+        expect { delete :destroy, id: another_answer }
+          .to_not change(Answer, :count)
       end
 
-      it 're-renders new view' do
-        post :create, question_id: question, answer: attributes_for(:invalid_answer)
-        expect(response).to render_template :new
+      it 'redirect to question#show' do
+        delete :destroy, id: another_answer
+        expect(response).to redirect_to assigns(:question)
       end
     end
   end

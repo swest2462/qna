@@ -1,4 +1,5 @@
 class QuestionsController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :load_question, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -6,6 +7,8 @@ class QuestionsController < ApplicationController
   end
 
   def show
+    @answer = @question.answers.build
+    @answers = @question.answers
   end
 
   def new
@@ -16,28 +19,37 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = Question.new(question_params)
-
+    @question = current_user.questions.build(question_params)
     if @question.save
       flash[:notice] = 'Your question successfully created.'
       redirect_to @question
     else
       render :new
+      flash[:error] = 'Question not saved'
     end
   end
 
-  def update
+ def update
     if @question.update(question_params)
+      flash[:success] = 'Your question successfully updated.'
       redirect_to @question
     else
+      flash[:error] = 'Your question successfully updated.'
       render :edit
     end
   end
 
   def destroy
-    @question.destroy
-    redirect_to questions_path
+    if current_user.author_of?(@question)
+      @question.destroy
+      flash[:notice] = 'Question successfully deleted.'
+      redirect_to questions_path
+    else
+      flash[:error] = 'You not owner of this question'
+      redirect_to @question
+    end
   end
+
 
   private
 
