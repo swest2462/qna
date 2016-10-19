@@ -1,3 +1,4 @@
+
 FactoryGirl.define do
   sequence :title do |n|
      "Test title #{n}"

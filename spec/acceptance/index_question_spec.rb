@@ -3,7 +3,7 @@ require 'rails_helper'
 
 feature 'Questions index', '
   non-authenticated user
-  able to see the questions list
+  able to see questions list
 ' do
 
   given!(:question) { create_pair :question }
