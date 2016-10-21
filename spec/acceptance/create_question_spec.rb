@@ -21,4 +21,16 @@ feature 'Create question', %q{
     click_on 'Ask question'
     expect(page).to have_content 'You need to sign in or sign up before continuing.'
   end
+
+  scenario 'invalid question did not saved' do
+    sign_in(user)
+    visit new_question_path
+
+    fill_in 'question_title', with: 'Title'
+    click_on 'Create'
+    save_and_open_page
+    expect(page).to have_content 'Question not saved'
+    visit questions_path
+    expect(page).to_not have_content 'Title'
+  end
 end

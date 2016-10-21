@@ -20,4 +20,12 @@ feature 'Create answer', '
     visit question_path(question)
     expect(page).to_not have_content 'Add answer'
   end
+
+   scenario 'invalid answer did not saves' do
+    sign_in(user)
+    visit question_path(question)
+    click_on 'Add answer'
+    expect(page).to have_content 'Answer not saved'
+  end
+
 end

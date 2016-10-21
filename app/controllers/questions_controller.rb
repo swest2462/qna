@@ -24,8 +24,8 @@ class QuestionsController < ApplicationController
       flash[:notice] = 'Your question successfully created.'
       redirect_to @question
     else
-      render :new
       flash[:error] = 'Question not saved'
+      render :new
     end
   end
 
