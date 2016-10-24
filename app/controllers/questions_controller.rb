@@ -24,7 +24,7 @@ class QuestionsController < ApplicationController
       flash[:notice] = 'Your question successfully created.'
       redirect_to @question
     else
-      flash[:error] = 'Question not saved'
+      flash[:notice] = 'Question not saved.'
       render :new
     end
   end
@@ -34,7 +34,6 @@ class QuestionsController < ApplicationController
       flash[:success] = 'Your question successfully updated.'
       redirect_to @question
     else
-      flash[:error] = 'Your question successfully updated.'
       render :edit
     end
   end
@@ -45,8 +44,8 @@ class QuestionsController < ApplicationController
       flash[:notice] = 'Question successfully deleted.'
       redirect_to questions_path
     else
-      flash[:error] = 'You not owner of this question'
-      redirect_to @question
+      flash.now[:error] = 'You not owner of this question'
+      render 'questions/show'
     end
   end
 

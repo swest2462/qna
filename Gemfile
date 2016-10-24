@@ -17,12 +17,15 @@ group :development, :test do
   gem 'byebug'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
+  gem 'selenium-webdriver', '~> 2.53', '>= 2.53.3'
+  gem 'database_cleaner'
+  gem 'capybara'
+  gem 'launchy'
 end
 
 group :test do
   gem 'shoulda-matchers'
-  gem 'capybara'
-  gem 'launchy'
+
 end
 
 group :development do

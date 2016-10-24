@@ -1,16 +1,20 @@
 p
   - if user_signed_in? && current_user.author_of?(@question)
-    = link_to('Delete question', question_path(@question), :method => :delete)
+    = link_to('Delete question', question_path(@question), method: :delete)
 
 p= @question.title
 p= @question.body
 
+.answer_errors
+  = render 'questions/answer_errors'
+
 - if user_signed_in?
-  = form_for([@question, @answer]) do |f|
+  = form_for([@question, @answer], remote: true) do |f|
     = f.label :body
     = f.text_field :body
     = f.submit 'Add answer'
 
-p
+
   -if @question.answers.any?
+    .answers
     = render @question.answers

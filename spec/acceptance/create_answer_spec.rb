@@ -7,13 +7,14 @@ feature 'Create answer', '
   given(:user) { create :user }
   given(:question) { create :question, user: user }
 
-  scenario 'Authenticated user add answer' do
+  scenario 'Authenticated user add answer', js: true do
     sign_in(user)
     visit question_path(question)
     fill_in 'answer_body', with: 'good answer!'
     click_on 'Add answer'
-    expect(page).to have_content 'good answer!'
-    expect(page).to have_content 'Your answer successfully saved'
+    within '.answers' do
+      expect(page).to have_content 'good answer!'
+    end
   end
 
   scenario 'Non-authenticated user add answer' do
@@ -27,5 +28,4 @@ feature 'Create answer', '
     click_on 'Add answer'
     expect(page).to have_content 'Answer not saved'
   end
-
 end

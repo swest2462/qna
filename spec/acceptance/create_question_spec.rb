@@ -28,8 +28,7 @@ feature 'Create question', %q{
 
     fill_in 'question_title', with: 'Title'
     click_on 'Create'
-    save_and_open_page
-    expect(page).to have_content 'Question not saved'
+    expect(page).to have_content 'Question not saved.'
     visit questions_path
     expect(page).to_not have_content 'Title'
   end
