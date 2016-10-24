@@ -140,9 +140,9 @@ RSpec.describe QuestionsController, type: :controller do
         expect { delete :destroy, id: question }.to_not change(Question, :count)
       end
 
-      it 'redirects to :index template' do
+      it 'render to :show template' do
         delete :destroy, id: question
-        expect(response).to redirect_to question_path(question)
+        expect(response).to render_template 'questions/show'
       end
     end
   end

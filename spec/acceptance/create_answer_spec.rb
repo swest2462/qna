@@ -17,15 +17,15 @@ feature 'Create answer', '
     end
   end
 
-  scenario 'Non-authenticated user add answer' do
+  scenario 'Non-authenticated user add answer', js: true do
     visit question_path(question)
     expect(page).to_not have_content 'Add answer'
   end
 
-   scenario 'invalid answer did not saves' do
+   scenario 'invalid answer did not saves', js: true do
     sign_in(user)
     visit question_path(question)
     click_on 'Add answer'
-    expect(page).to have_content 'Answer not saved'
+    expect(page).to have_content 'Body is too short (minimum is 5 characters)'
   end
 end
